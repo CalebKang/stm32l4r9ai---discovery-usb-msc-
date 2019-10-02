@@ -98,8 +98,8 @@ int main(void)
   /* USER CODE BEGIN 2 */
 #endif
   BSP_OSPI_NOR_Init();
-#if 1
   static uint8_t pData[4096];
+#if 0
   BSP_OSPI_NOR_Erase_Chip();
   BSP_OSPI_NOR_Erase_Block(0);
 #endif
@@ -109,7 +109,6 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    BSP_OSPI_NOR_Read(pData, 0x0, 4096);
     HAL_Delay(1000);
     /* USER CODE END WHILE */
 

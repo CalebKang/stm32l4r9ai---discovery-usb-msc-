@@ -469,6 +469,12 @@ uint8_t BSP_OSPI_NOR_Erase_Sector(uint32_t Sector)
     return OSPI_NOR_ERROR;
   }
 
+  /* Configure automatic polling mode to wait for end of erase */
+  if (OSPI_NOR_AutoPollingMemReady(&OSPINORHandle, MX25LM51245G_SECTOR_ERASE_MAX_TIME) != OSPI_NOR_OK)
+  {
+    return OSPI_NOR_ERROR;
+  }
+
   return OSPI_NOR_OK;
 }
 

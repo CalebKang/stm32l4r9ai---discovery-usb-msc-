@@ -73,7 +73,7 @@
   #define USE_EXFLASH
   #ifdef USE_EXFLASH
     #define STORAGE_LUN_NBR                  1
-    #define STORAGE_BLK_SIZ                  0x200
+    #define STORAGE_BLK_SIZ                  (MX25LM51245G_SECTOR_SIZE)
     #define STORAGE_BLK_NBR                  (MX25LM51245G_FLASH_SIZE / STORAGE_BLK_SIZ)
   #else
     #define STORAGE_LUN_NBR                  1
@@ -191,6 +191,12 @@ USBD_StorageTypeDef USBD_Storage_Interface_fops_FS =
 int8_t STORAGE_Init_FS(uint8_t lun)
 {
   /* USER CODE BEGIN 2 */
+#ifndef USE_EXFLASH
+  for(int i=0; i<STORAGE_BLK_NBR*STORAGE_BLK_SIZ; i++)
+  {
+    buffer[i] = 0xFF;
+  }
+#endif
   return (USBD_OK);
   /* USER CODE END 2 */
 }
@@ -263,7 +269,13 @@ int8_t STORAGE_Write_FS(uint8_t lun, uint8_t *buf, uint32_t blk_addr, uint16_t b
   /* erase */
 #ifdef USE_EXFLASH
   /* write */
+
+  for(int i=0; i<blk_len; i++)
+  {
+    BSP_OSPI_NOR_Erase_Sector(blk_addr+i);
+  }
   BSP_OSPI_NOR_Write(buf, blk_addr*STORAGE_BLK_SIZ, blk_len*STORAGE_BLK_SIZ);
+
 #else
   memcpy(&buffer[blk_addr*STORAGE_BLK_SIZ], buf, blk_len*STORAGE_BLK_SIZ);
 #endif
